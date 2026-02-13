@@ -1,19 +1,39 @@
 {
-  "name": "Claude Code Environment",
-  "image": "mcr.microsoft.com/devcontainers/python:3.12",
+  "name": "Kimi CLI Environment",
+  "image": "mcr.microsoft.com/devcontainers/base:ubuntu",
   "features": {
     "ghcr.io/devcontainers/features/node:1": {
       "version": "22"
     }
   },
-  "postCreateCommand": "npm install -g @anthropic-ai/claude-code",
+  "mounts": [
+    "source=${localEnv:HOME}/.kimi,target=/home/vscode/.kimi,type=bind,consistency=cached"
+  ],
+  "shutdownAction": "stopContainer",
+  "updateRemoteUserUID": true,
+  "postCreateCommand": "curl -L code.kimi.com/install.sh | bash",
+  // "postAttachCommand": "kimi-cli",
+  // "postCreateCommand": "curl -fsSL https://claude.ai/install.sh | bash",
+  // "postAttachCommand": "claude",
   "customizations": {
     "vscode": {
       "extensions": [
-        "ms-python.python",
-        "ms-python.pylint"
-      ]
-    }
+        // "moonshot-ai.kimi-code"
+        "anthropic.claude-code"
+      ],
+      "settings": {
+        "claude-code.terminalMode": true,
+        "terminal.integrated.profiles.linux": {
+          "bash (kimi)": {
+            "path": "bash",
+            "args": ["-lc", "exec kimi-cli"]
+            // "args": ["-lc", "exec claude"]
+          }
+        },
+        "terminal.integrated.defaultProfile.linux": "bash (kimi)"
+        // "terminal.integrated.defaultProfile.linux": "bash (claude)"
+      }
+    }  
   },
   "remoteUser": "vscode"
 }
